@@ -3,404 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>20問でわかる！簡易エゴグラム診断ツール</title>
-    <!-- Tailwind CSS CDN -->
+    <title>エゴグラム診断（20問簡易版）</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN for Radar and Bar Charts -->
+    <!-- Chart.js for radar chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Noto Sans JP', 'Inter', sans-serif;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-lg font-bold tracking-wider flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                エゴグラム性格診断
-            </h1>
-            <span class="text-xs bg-indigo-500 px-2.5 py-1 rounded-full font-medium">スマホ対応・20問版</span>
-        </div>
+    <!-- ヘッダー -->
+    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 text-center">
+        <h1 class="text-xl font-bold">エゴグラム診断（20問簡易版）</h1>
+        <p class="text-xs text-indigo-100 mt-1">自己理解とコミュニケーション改善のための心理テスト</p>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-2xl w-full mx-auto px-4 py-6 flex-grow">
+    <!-- メインコンテンツ -->
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-xl">
 
-        <!-- Welcome View -->
-        <div id="welcome-view" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 text-center space-y-6">
-            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
-                🧠
-            </div>
-            <div class="space-y-2">
-                <h2 class="text-2xl font-bold text-slate-900">あなたのココロのバランスを診断</h2>
-                <p class="text-slate-600 text-sm leading-relaxed">
-                    エゴグラムは、交流分析（TA）理論に基づき、人間の自我状態を5つ（CP, NP, A, FC, AC）に分けてグラフ化する心理テストです。全20問の質問に直感でお答えください。
-                </p>
-            </div>
-            
-            <div class="bg-indigo-50/60 rounded-xl p-4 text-left text-xs text-indigo-900 space-y-1">
-                <p class="font-bold">📝 診断のポイント</p>
-                <p>・深く考えず、パッと頭に浮かんだ直感でお答えください。</p>
-                <p>・「良い・悪い」のテストではありません。ありのままの自分を知る手がかりになります。</p>
-            </div>
-
-            <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition duration-200 text-base">
-                診断をはじめる (全20問)
+        <!-- スタート画面 -->
+        <div id="start-screen" class="bg-white rounded-2xl shadow-sm p-6 text-center">
+            <div class="text-indigo-600 text-5xl mb-4">🧠</div>
+            <h2 class="text-lg font-bold mb-3">自分の心の傾向を知る</h2>
+            <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                全20問の質問に「はい」「どちらでもない」「いいえ」でお答えください。<br>
+                あなたの5つの自我状態（CP, NP, A, FC, AC）のバランスをグラフとタイプ別カードで分かりやすく表示します。
+            </p>
+            <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow transition duration-200">
+                診断を始める（全20問）
             </button>
         </div>
 
-        <!-- Quiz View -->
-        <div id="quiz-view" class="hidden space-y-6">
-            <!-- Progress Bar -->
-            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 space-y-2">
-                <div class="flex justify-between text-xs font-semibold text-slate-500">
-                    <span id="progress-text">質問 1 / 20</span>
-                    <span id="progress-percent">5%</span>
-                </div>
-                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 5%;"></div>
+        <!-- クイズ画面 -->
+        <div id="quiz-screen" class="hidden">
+            <div class="mb-4 flex justify-between items-center text-sm font-semibold text-slate-500 px-1">
+                <span id="progress-text">質問 1 / 20</span>
+                <span id="category-badge" class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-xs"></span>
+            </div>
+            <!-- プログレスバー -->
+            <div class="w-full bg-slate-200 h-2 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- 質問カード -->
+            <div class="bg-white rounded-2xl shadow-sm p-6 mb-4">
+                <h3 id="question-text" class="text-base font-bold text-slate-800 mb-6 leading-relaxed">
+                    <!-- 質問がここに挿入されます -->
+                </h3>
+
+                <!-- 選択肢ボタン -->
+                <div class="space-y-3">
+                    <button onclick="answer(2)" class="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50 font-medium text-sm transition flex items-center justify-between group">
+                        <span>はい（そう思う）</span>
+                        <span class="w-5 h-5 rounded-full border border-slate-300 group-hover:border-indigo-600 flex items-center justify-center text-xs text-transparent group-hover:text-indigo-600">●</span>
+                    </button>
+                    <button onclick="answer(1)" class="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50 font-medium text-sm transition flex items-center justify-between group">
+                        <span>どちらでもない</span>
+                        <span class="w-5 h-5 rounded-full border border-slate-300 group-hover:border-indigo-600 flex items-center justify-center text-xs text-transparent group-hover:text-indigo-600">●</span>
+                    </button>
+                    <button onclick="answer(0)" class="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50 font-medium text-sm transition flex items-center justify-between group">
+                        <span>いいえ（そう思わない）</span>
+                        <span class="w-5 h-5 rounded-full border border-slate-300 group-hover:border-indigo-600 flex items-center justify-center text-xs text-transparent group-hover:text-indigo-600">●</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Question Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 space-y-8">
-                <div class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full" id="question-category">
-                    カテゴリ
+            <!-- 戻るボタン -->
+            <button id="prev-btn" onclick="prevQuestion()" class="hidden text-xs text-slate-500 hover:text-indigo-600 underline px-1">
+                ひとつ前の質問に戻る
+            </button>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="result-screen" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="text-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-800 mb-1">診断結果</h2>
+                    <!-- 型のタイトルカード風表示 -->
+                    <div id="pattern-card-header" class="inline-block bg-indigo-50 border border-indigo-100 px-4 py-3 rounded-xl my-2 w-full">
+                        <div id="pattern-title" class="text-base font-bold text-indigo-700">判定中...</div>
+                        <div id="pattern-desc" class="text-xs text-slate-600 mt-1">...</div>
+                    </div>
                 </div>
                 
-                <h3 id="question-title" class="text-lg md:text-xl font-bold text-slate-900 leading-snug">
-                    ここに質問文が入ります
-                </h3>
-
-                <!-- Options -->
-                <div class="space-y-3" id="options-container">
-                    <!-- Dynamically generated options -->
-                </div>
-            </div>
-
-            <!-- Navigation buttons -->
-            <div class="flex justify-between items-center pt-2">
-                <button id="prev-btn" onclick="prevQuestion()" class="hidden bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium py-2.5 px-5 rounded-xl text-sm transition shadow-sm">
-                    戻る
-                </button>
-                <div class="ml-auto"></div>
-            </div>
-        </div>
-
-        <!-- Result View -->
-        <div id="result-view" class="hidden space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 text-center space-y-4">
-                <span class="text-xs bg-indigo-50 text-indigo-600 font-bold px-3 py-1 rounded-full">診断結果レポート</span>
-                <h2 class="text-2xl font-bold text-slate-900" id="result-type-name">タイプ名</h2>
-                <p class="text-slate-600 text-sm" id="result-summary">
-                    ここに総合的な特徴やアドバイスが入ります。
-                </p>
-            </div>
-
-            <!-- Chart Container -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4">
-                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                    </svg>
-                    自我状態バランス（レーダーチャート）
-                </h3>
-                <div class="relative w-full max-w-sm mx-auto h-72">
+                <!-- レーダーチャート -->
+                <div class="relative w-full max-w-xs mx-auto h-64 mb-4">
                     <canvas id="radarChart"></canvas>
                 </div>
+
+                <!-- スコア一覧（20問版は各4問×最大2点＝最大8点） -->
+                <div class="grid grid-cols-5 gap-2 text-center bg-slate-50 p-3 rounded-xl mb-4">
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold">CP</div>
+                        <div id="score-cp" class="text-base font-extrabold text-indigo-600">0</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold">NP</div>
+                        <div id="score-np" class="text-base font-extrabold text-indigo-600">0</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold">A</div>
+                        <div id="score-a" class="text-base font-extrabold text-indigo-600">0</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold">FC</div>
+                        <div id="score-fc" class="text-base font-extrabold text-indigo-600">0</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold">AC</div>
+                        <div id="score-ac" class="text-base font-extrabold text-indigo-600">0</div>
+                    </div>
+                </div>
+
+                <button onclick="location.reload()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-xl text-sm transition">
+                    もう一度診断する
+                </button>
             </div>
 
-            <!-- Bar Chart Container -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4">
-                <h3 class="font-bold text-slate-800 text-sm">スコア詳細比較</h3>
-                <div class="relative w-full h-48">
-                    <canvas id="barChart"></canvas>
+            <!-- 解説カード -->
+            <div class="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                <h3 class="font-bold text-slate-800 border-b pb-2 text-sm">各自我状態の解説とスコア傾向</h3>
+                <div id="analysis-details" class="space-y-4 text-xs text-slate-600 leading-relaxed">
+                    <!-- 動的に解説が挿入されます -->
                 </div>
             </div>
-
-            <!-- Detailed Breakdowns -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 space-y-6">
-                <h3 class="font-bold text-slate-900 border-b pb-3">5つの自我状態（スコアと解説）</h3>
-                <div id="breakdown-container" class="space-y-6">
-                    <!-- Dynamically filled breakdown -->
-                </div>
-            </div>
-
-            <!-- Restart Button -->
-            <button onclick="resetQuiz()" class="w-full bg-slate-800 hover:bg-slate-900 active:bg-black text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition duration-200 text-base">
-                もう一度診断する
-            </button>
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="text-center py-6 text-xs text-slate-400">
-        <p>&copy; 2026 エゴグラム簡易診断ツール. All rights reserved.</p>
+    <!-- フッター -->
+    <footer class="text-center py-4 text-[10px] text-slate-400">
+        &copy; Egogram Assessment Tool (20-Question Version)
     </footer>
 
-    <!-- Script Application Logic -->
+    <!-- スクリプト -->
     <script>
-        // 20問の質問データ (CP, NP, A, FC, AC 各4問ずつ)
-        // 各問題にはカテゴリとスコア加算の重み（逆転項目などがある場合は考慮、今回はシンプルに「はい」=2点、「どちらでもない」=1点、「いいえ」=0点として設計）
+        // 20問の質問データ（各カテゴリ4問）
         const questions = [
-            // CP (Critical Parent: 批判的親・厳しさ・正義感)
-            { id: 1, category: "CP", text: "ルーズな人や約束を守らない人を見ると、許せない気持ちが強くわく。" },
-            { id: 2, category: "CP", text: "物事を進める時は、手順や規則が正しく守られているかを厳しくチェックする。" },
-            { id: 3, category: "CP", text: "自分の意見や信念曲げず、正しいことは最後まで主張すべきだ。" },
-            { id: 4, category: "CP", text: "他人のマナー違反や礼儀知らずな態度に対して、つい注意したくなる。" },
+            // CP (Critical Parent: 厳しき親)
+            { text: "礼儀作法やマナーには厳格な方だ", type: "CP" },
+            { text: "曲がったことや不誠実な態度は許せない", type: "CP" },
+            { text: "ルールや規則は絶対に守るべきだと思っている", type: "CP" },
+            { text: "相手のためを思って、つい小言や注意をしてしまう", type: "CP" },
 
-            // NP (Nurturing Parent: 養育的親・優しさ・思いやり)
-            { id: 5, category: "NP", text: "困っている人や悩んでいる人を見ると、放っておけず手助けしたくなる。" },
-            { id: 6, category: "NP", text: "他人の長所や良いところを見つけるのが得意で、褒めることが多い。" },
-            { id: 7, category: "NP", text: "人の失敗に対しても、寛大な心で許してあげられる方だ。" },
-            { id: 8, category: "NP", text: "周りの人が心地よく過ごせるよう、気配りやサポートを大切にしている。" },
+            // NP (Nurturing Parent: 優しき親)
+            { text: "他人の悩みや相談に親身になって乗ることが多い", type: "NP" },
+            { text: "困っている人を見ると放っておけない", type: "NP" },
+            { text: "人を褒めたり励ましたりするのが好きだ", type: "NP" },
+            { text: "面倒見が良いと人から言われることが多い", type: "NP" },
 
-            // A (Adult: 成人・論理性・客観性)
-            { id: 9, category: "A", text: "感情に流されず、事実やデータに基づいて冷静に物事を判断するようにしている。" },
-            { id: 10, category: "A", text: "問題が起きたとき、感情的になるよりも原因と解決策を論理的に考える。" },
-            { id: 11, category: "A", text: "計画通りに物事を進めることが得意で、無駄なことが嫌いだ。" },
-            { id: 12, category: "A", text: "他人の意見を聞くときも、偏った見方をせず客観的に受け止めようとする。" },
+            // A (Adult: 成人)
+            { text: "感情に流されず、客観的・論理的に物事を判断する", type: "A" },
+            { text: "問題が起きたときは、まず原因と対策を冷静に分析する", type: "A" },
+            { text: "物事を決める時は、メリットとデメリットを慎重に比較する", type: "A" },
+            { text: "仕事や勉強では、効率や合理性を重視する", type: "A" },
 
-            // FC (Free Child: 自由な子供・直感的・陽気さ・創造性)
-            { id: 13, category: "FC", text: "自分のやりたいことや興味を持ったことに、ワクワクしてすぐ挑戦したくなる。" },
-            { id: 14, category: "FC", text: "楽しいことや笑うことが大好きで、自分の感情を素直に表現する方だ。" },
-            { id: 15, category: "FC", text: "ユーモアセンスがあり、周りの人を楽しませたり笑顔にさせたりするのが好きだ。" },
-            { id: 16, category: "FC", text: "束縛されるのが嫌いで、のびのびと自由に行動したいタイプだ。" },
+            // FC (Free Child: 自由な子ども)
+            { text: "自分の感情や欲求に素直に従う方だ", type: "FC" },
+            { text: "好奇心が旺盛で、新しいことに挑戦するのが好きだ", type: "FC" },
+            { text: "明るくユーモアがあり、周りを楽しませることが好きだ", type: "FC" },
+            { text: "細かいことは気にせず、楽観的に考えることが多い", type: "FC" },
 
-            // AC (Adapted Child: 順応した子供・協調性・遠慮・気疲れ)
-            { id: 17, category: "AC", text: "周りの人の目を気にしたり、嫌われないように合わせたりすることが多い。" },
-            { id: 18, category: "AC", text: "自分の意見があっても、場の空気を壊さないために飲み込んでしまう。" },
-            { id: 19, category: "AC", text: "何か頼まれたとき、断るのが苦手で無理をして引き受けてしまうことがある。" },
-            { id: 20, category: "AC", text: "「自分はうまくやれているだろうか」と、つい不安やプレッシャーを感じやすい。" }
+            // AC (Adapted Child: 順応した子ども)
+            { text: "周りの目を気にして、自分の意見を抑えてしまうことがある", type: "AC" },
+            { text: "人に嫌われるのが怖くて、頼まれると断りにくい", type: "AC" },
+            { text: "我慢することが美徳だと思っているところがある", type: "AC" },
+            { text: "「自分はダメな人間ではないか」と悩むことがある", type: "AC" }
         ];
 
-        // 各自我状態の詳細解説データ
-        const egoInfo = {
-            CP: {
-                name: "CP (批判的親)",
-                subtitle: "厳しさ・正義感・責任感",
-                description: "理想が高く、規律やモラル、責任感を重んじるエネルギーです。高い数値は正義感が強いことを示しますが、高すぎると他人に厳しくなりがちです。"
-            },
-            NP: {
-                name: "NP (養育的親)",
-                subtitle: "優しさ・思いやり・包容力",
-                description: "他人への愛情、思いやり、親切心を司るエネルギーです。高い数値は面倒見の良さや温かみを示しますが、高すぎると過保護や自己犠牲につながることがあります。"
-            },
-            A: {
-                name: "A (成人)",
-                subtitle: "論理性・客観性・現実主義",
-                description: "感情に左右されず、冷静な事実認識や計算、論理的思考を行うエネルギーです。社会生活や問題解決においてバランスを取る重要な役割を持ちます。"
-            },
-            FC: {
-                name: "FC (自由な子供)",
-                subtitle: "奔放さ・創造性・楽しさ",
-                description: "感情の赴くままに楽しむ、好奇心旺盛で天真爛漫なエネルギーです。高い数値は創造性や魅力につながりますが、高すぎるとわがままや衝動的になることがあります。"
-            },
-            AC: {
-                name: "AC (順応した子供)",
-                subtitle: "協調性・我慢・従順さ",
-                description: "周囲の期待や空気を読み、協調性を保とうとするエネルギーです。高い数値は慎重さや礼儀正しさを示しますが、高すぎるとストレスや過剰な我慢を抱えやすくなります。"
-            }
+        let currentIdx = 0;
+        let answers = new Array(questions.length).fill(null);
+
+        const categoryNames = {
+            CP: "【CP】 厳しき親（責任感・正義感）",
+            NP: "【NP】 優しき親（受容・同情）",
+            A:  "【A】 成人（論理・現実的）",
+            FC: "【FC】 自由な子ども（楽観・好奇心）",
+            AC: "【AC】 順応した子ども（協調・遠慮）"
         };
 
-        // 状態管理変数
-        let currentQuestionIndex = 0;
-        let userAnswers = {}; // { questionId: score }
-        let radarChartInstance = null;
-        let barChartInstance = null;
-
-        // DOM要素
-        const welcomeView = document.getElementById('welcome-view');
-        const quizView = document.getElementById('quiz-view');
-        const resultView = document.getElementById('result-view');
-        const progressText = document.getElementById('progress-text');
-        const progressPercent = document.getElementById('progress-percent');
-        const progressBar = document.getElementById('progress-bar');
-        const questionCategory = document.getElementById('question-category');
-        const questionTitle = document.getElementById('question-title');
-        const optionsContainer = document.getElementById('options-container');
-        const prevBtn = document.getElementById('prev-btn');
-
         function startQuiz() {
-            welcomeView.classList.add('hidden');
-            quizView.classList.remove('hidden');
-            currentQuestionIndex = 0;
-            userAnswers = {};
-            renderQuestion();
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQuestion();
         }
 
-        function renderQuestion() {
-            const q = questions[currentQuestionIndex];
-            const total = questions.length;
+        function showQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('progress-text').textContent = `質問 ${currentIdx + 1} / 20`;
+            document.getElementById('category-badge').textContent = categoryNames[q.type];
+            document.getElementById('question-text').textContent = q.text;
             
-            // プログレス更新
-            const percent = Math.round(((currentQuestionIndex) / total) * 100);
-            progressText.innerText = `質問 ${currentQuestionIndex + 1} / ${total}`;
-            progressPercent.innerText = `${percent}%`;
-            progressBar.style.width = `${percent}%`;
+            const progress = ((currentIdx) / 20) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
 
-            // カテゴリ＆質問文
-            questionCategory.innerText = `特性分類: ${q.category}`;
-            questionTitle.innerText = q.text;
-
-            // 戻るボタンの表示制御
-            if (currentQuestionIndex > 0) {
-                prevBtn.classList.remove('hidden');
+            if (currentIdx > 0) {
+                document.getElementById('prev-btn').classList.remove('hidden');
             } else {
-                prevBtn.classList.add('hidden');
+                document.getElementById('prev-btn').classList.add('hidden');
             }
-
-            // 選択肢の描画（はい: 2点, どちらでもない: 1点, いいえ: 0点）
-            // ※各カテゴリ4問なので、最大スコアは 4問 × 2点 = 8点となります。
-            const options = [
-                { label: "はい", score: 2, desc: "よく当てはまる" },
-                { label: "どちらでもない", score: 1, desc: "どちらとも言えない" },
-                { label: "いいえ", score: 0, desc: "あまり当てはまらない" }
-            ];
-
-            optionsContainer.innerHTML = '';
-            options.forEach(opt => {
-                const isSelected = userAnswers[q.id] === opt.score;
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${
-                    isSelected 
-                        ? 'border-indigo-600 bg-indigo-50/50 text-indigo-900 font-medium shadow-sm' 
-                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
-                }`;
-                btn.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300'}">
-                            ${isSelected ? '<div class="w-2 h-2 bg-white rounded-full"></div>' : ''}
-                        </div>
-                        <span class="text-base font-medium">${opt.label}</span>
-                    </div>
-                    <span class="text-xs text-slate-400">${opt.desc}</span>
-                `;
-                btn.onclick = () => selectAnswer(q.id, opt.score);
-                optionsContainer.appendChild(btn);
-            });
         }
 
-        function selectAnswer(questionId, score) {
-            userAnswers[questionId] = score;
+        function answer(score) {
+            answers[currentIdx] = score;
+            currentIdx++;
 
-            // 少し遅延を入れて次へ進む
-            setTimeout(() => {
-                if (currentQuestionIndex < questions.length - 1) {
-                    currentQuestionIndex++;
-                    renderQuestion();
-                } else {
-                    // 全問完了 -> 結果表示
-                    showResults();
-                }
-            }, 200);
+            if (currentIdx < questions.length) {
+                showQuestion();
+            } else {
+                calculateResult();
+            }
         }
 
         function prevQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                renderQuestion();
+            if (currentIdx > 0) {
+                currentIdx--;
+                showQuestion();
             }
         }
 
-        function calculateScores() {
-            let scores = { CP: 0, NP: 0, A: 0, FC: 0, AC: 0 };
-            
-            questions.forEach(q => {
-                const score = userAnswers[q.id] !== undefined ? userAnswers[q.id] : 0;
-                scores[q.category] += score;
+        function calculateResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const scores = { CP: 0, NP: 0, A: 0, FC: 0, AC: 0 };
+            questions.forEach((q, idx) => {
+                scores[q.type] += answers[idx];
             });
 
-            return scores; // 各0〜8点
-        }
+            document.getElementById('score-cp').textContent = scores.CP;
+            document.getElementById('score-np').textContent = scores.NP;
+            document.getElementById('score-a').textContent = scores.A;
+            document.getElementById('score-fc').textContent = scores.FC;
+            document.getElementById('score-ac').textContent = scores.AC;
 
-        function showResults() {
-            quizView.classList.add('hidden');
-            resultView.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // 20問版のパターン判定
+            determinePattern(scores);
 
-            const scores = calculateScores();
-
-            // タイプ判定（簡易ロジック例: 最も高いスコア、または特徴的なバランスで判定）
-            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-            const highest = sorted[0];
-
-            let typeName = "";
-            let summaryText = "";
-
-            if (highest[1] >= 6) {
-                typeName = `${egoInfo[highest[0]].name} 突出タイプ`;
-                summaryText = `あなたは【${egoInfo[highest[0]].name}】のエネルギーが非常に強い傾向にあります。その強みを活かしつつ、他の自我状態とのバランスを意識することで、より円滑で柔軟な人間関係を築くことができます。`;
-            } else {
-                typeName = "バランス調和タイプ";
-                summaryText = `極端な偏りがなく、各自我状態が全体的にバランスよく保たれています。状況に応じて柔軟に考え方や態度を切り替えられる適応力の高いタイプです。`;
-            }
-
-            document.getElementById('result-type-name').innerText = typeName;
-            document.getElementById('result-summary').innerText = summaryText;
-
-            // グラフ描画
-            renderCharts(scores);
-
-            // 詳細解説リスト描画
-            const breakdownContainer = document.getElementById('breakdown-container');
-            breakdownContainer.innerHTML = '';
-
-            Object.keys(scores).forEach(key => {
-                const score = scores[key];
-                const maxScore = 8;
-                const percent = Math.round((score / maxScore) * 100);
-                const info = egoInfo[key];
-
-                const div = document.createElement('div');
-                div.className = "space-y-2 border-b border-slate-100 pb-4 last:border-b-0 last:pb-0";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="font-bold text-slate-800">${info.name} <span class="text-xs font-normal text-slate-500">(${info.subtitle})</span></span>
-                        <span class="font-bold text-indigo-600">${score}点 / 8点</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div class="bg-indigo-600 h-2 rounded-full" style="width: ${percent}%;"></div>
-                    </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">${info.description}</p>
-                `;
-                breakdownContainer.appendChild(div);
-            });
-        }
-
-        function renderCharts(scores) {
-            const labels = ['CP (批判的親)', 'NP (養育的親)', 'A (成人)', 'FC (自由な子供)', 'AC (順応した子供)'];
-            const dataValues = [scores.CP, scores.NP, scores.A, scores.FC, scores.AC];
-
-            // 既存チャート破棄
-            if (radarChartInstance) radarChartInstance.destroy();
-            if (barChartInstance) barChartInstance.destroy();
-
-            // レーダーチャート
-            const radarCtx = document.getElementById('radarChart').getContext('2d');
-            radarChartInstance = new Chart(radarCtx, {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: labels,
+                    labels: ['CP (厳格)', 'NP (寛容)', 'A (論理)', 'FC (自由)', 'AC (協調)'],
                     datasets: [{
-                        label: 'あなたのスコア',
-                        data: dataValues,
+                        label: '自我状態スコア',
+                        data: [scores.CP, scores.NP, scores.A, scores.FC, scores.AC],
                         backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                        borderColor: 'rgb(79, 70, 229)',
-                        pointBackgroundColor: 'rgb(79, 70, 229)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(79, 70, 229)'
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(79, 70, 229, 1)'
                     }]
                 },
                 options: {
@@ -414,54 +267,74 @@
                             ticks: { stepSize: 2 }
                         }
                     },
-                    plugins: {
-                        legend: { display: false }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
 
-            // 棒グラフ
-            const barCtx = document.getElementById('barChart').getContext('2d');
-            barChartInstance = new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['CP', 'NP', 'A', 'FC', 'AC'],
-                    datasets: [{
-                        label: 'スコア',
-                        data: dataValues,
-                        backgroundColor: [
-                            'rgba(79, 70, 229, 0.8)',
-                            'rgba(99, 102, 241, 0.8)',
-                            'rgba(129, 140, 248, 0.8)',
-                            'rgba(165, 180, 252, 0.8)',
-                            'rgba(199, 210, 254, 0.8)'
-                        ],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 8,
-                            ticks: { stepSize: 2 }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
+            generateAnalysis(scores);
         }
 
-        function resetQuiz() {
-            resultView.classList.add('hidden');
-            welcomeView.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        function determinePattern(s) {
+            let title = "への字型 円満バランス";
+            let desc = "思いやりと冷静さのバランスが◎";
+
+            // 20問版（各最大8点）用の判定目安
+            if (s.NP >= 6 && s.A >= 6 && s.CP <= 5 && s.AC <= 5) {
+                title = "への字型 円満バランス";
+                desc = "思いやりと冷静さのバランスが◎";
+            } else if (s.NP >= 6 && s.AC >= 6 && s.FC <= 4) {
+                title = "N型 献身タイプ";
+                desc = "人に尽くすが、がまんしやすい傾向";
+            } else if (s.CP >= 6 && s.FC >= 6 && s.AC <= 4) {
+                title = "逆N型 自己主張タイプ";
+                desc = "考えがはっきり、行動力がある";
+            } else if (s.CP >= 5 && s.NP >= 5 && s.FC >= 5 && s.A <= 4) {
+                title = "M型 明るい楽天タイプ";
+                desc = "明るいムードメーカー";
+            } else if (s.CP >= 6 && s.AC >= 6) {
+                title = "U字型 葛藤ストレスタイプ";
+                desc = "理想と周りの間で悩みや負担を抱えやすい";
+            } else {
+                title = "バランス標準タイプ";
+                desc = "柔軟で安定した心の状態です";
+            }
+
+            document.getElementById('pattern-title').textContent = title;
+            document.getElementById('pattern-desc').textContent = desc;
+        }
+
+        function generateAnalysis(s) {
+            const container = document.getElementById('analysis-details');
+            
+            function getLevel(val) {
+                if (val >= 6) return "高い傾向";
+                if (val <= 2) return "低い傾向";
+                return "標準的";
+            }
+
+            container.innerHTML = `
+                <div>
+                    <strong class="text-slate-800">CP（批判的親）：${s.CP}点 (${getLevel(s.CP)})</strong>
+                    <p class="text-slate-500 mt-0.5">責任感や正義感、理想主義の高さを表します。高い人は規律を重んじ、低い人は寛容で他人に寛大です。</p>
+                </div>
+                <div>
+                    <strong class="text-slate-800">NP（養育的親）：${s.NP}点 (${getLevel(s.NP)})</strong>
+                    <p class="text-slate-500 mt-0.5">優しさ、思いやり、母性を表します。高い人は面倒見が良く、低い人はサバサバとしていて自立心を重んじます。</p>
+                </div>
+                <div>
+                    <strong class="text-slate-800">A（成人）：${s.A}点 (${getLevel(s.A)})</strong>
+                    <p class="text-slate-500 mt-0.5">客観적、論理的、現実的な思考力を表します。高い人は冷静な判断が得意で、低い人は直感的・感情的に動きやすい傾向があります。</p>
+                </div>
+                <div>
+                    <strong class="text-slate-800">FC（自由な子ども）：${s.FC}点 (${getLevel(s.FC)})</strong>
+                    <p class="text-slate-500 mt-0.5">明るさ、好奇心、奔放さを表します。高い人はエネルギッシュでユーモアがあり、低い人はおとなしく控えめです。</p>
+                </div>
+                <div>
+                    <strong class="text-slate-800">AC（順応した子ども）：${s.AC}点 (${getLevel(s.AC)})</strong>
+                    <p class="text-slate-500 mt-0.5">協調性、従順さ、遠慮深さを表します。高い人は空気を読むのが得意な一方で我慢しやすく、低い人はマイペースで自己主張が強いです。</p>
+                </div>
+            `;
         }
     </script>
-
 </body>
 </html>
